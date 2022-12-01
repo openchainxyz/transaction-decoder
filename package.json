@@ -1,6 +1,6 @@
 {
   "name": "@samczsun/transaction-decoder",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Decode EVM-based transaction into structured data",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,11 @@
   },
   "homepage": "https://github.com/samczsun/transaction-decoder#readme",
   "dependencies": {
-    "ethers": "^5.7.2"
+    "@ethersproject/abi": "^5.7.0",
+    "@ethersproject/abstract-provider": "^5.7.0",
+    "@ethersproject/providers": "^5.7.2",
+    "ethers": "^5.7.2",
+    "lib": "link:@ethersproject/abi/lib"
   },
   "devDependencies": {
     "@types/jest": "^29.2.3",
