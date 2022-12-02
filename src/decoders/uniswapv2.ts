@@ -156,13 +156,18 @@ export class UniswapV2RouterSwapDecoder extends Decoder<SwapAction> {
         state.requestTokenMetadata(swapResult.tokenIn);
         state.requestTokenMetadata(swapResult.tokenOut);
 
+        const inputAmountIn: bigint | undefined = inputs['amountIn'] ? (inputs['amountIn'] as BigNumber).toBigInt() : undefined;
+        const inputAmountOutMin: bigint | undefined = inputs['amountOutMin'] ? (inputs['amountOutMin'] as BigNumber).toBigInt() : undefined;
+        const inputAmountOut: bigint | undefined = inputs['amountOut'] ? (inputs['amountOut'] as BigNumber).toBigInt() : undefined;
+        const inputAmountInMax: bigint | undefined = inputs['amountInMax'] ? (inputs['amountInMax'] as BigNumber).toBigInt() : undefined;
+
         // pull info from from calldata
         if (swapMetadata.exactIn) {
-            swapResult.amountIn = swapMetadata.input === 'eth' ? node.value.toBigInt() : (inputs['amountIn'] as BigNumber).toBigInt();
-            swapResult.amountOutMin = (inputs['amountOutMin'] as BigNumber).toBigInt();
+            swapResult.amountIn = swapMetadata.input === 'eth' ? node.value.toBigInt() : inputAmountIn;
+            swapResult.amountOutMin = inputAmountOutMin;
         } else {
-            swapResult.amountOut = (inputs['amountOut'] as BigNumber).toBigInt();
-            swapResult.amountInMax = (inputs['amountInMax'] as BigNumber).toBigInt();
+            swapResult.amountOut = inputAmountOut;
+            swapResult.amountInMax = inputAmountInMax;
         }
 
         // pull info from events
@@ -195,19 +200,25 @@ export class UniswapV2RouterSwapDecoder extends Decoder<SwapAction> {
             if (firstSwapEvent) {
                 const parsedEvent = abi.parseLog(firstSwapEvent);
 
+                const eventAmount0In: bigint | undefined = parsedEvent.args['amount0In'] ? (parsedEvent.args['amount0In'] as BigNumber).toBigInt() : undefined;
+                const eventAmount1In: bigint | undefined = parsedEvent.args['amount1In'] ? (parsedEvent.args['amount1In'] as BigNumber).toBigInt() : undefined;
+
                 swapResult.amountIn =
                     firstToken0 === path[0]
-                        ? (parsedEvent.args['amount0In'] as BigNumber).toBigInt()
-                        : (parsedEvent.args['amount1In'] as BigNumber).toBigInt();
+                        ? eventAmount0In
+                        : eventAmount1In;
             }
 
             if (lastSwapEvent) {
                 const parsedEvent = abi.parseLog(lastSwapEvent);
 
+                const eventAmount0Out: bigint | undefined = parsedEvent.args['amount0Out'] ? (parsedEvent.args['amount0Out'] as BigNumber).toBigInt() : undefined;
+                const eventAmount1Out: bigint | undefined = parsedEvent.args['amount1Out'] ? (parsedEvent.args['amount1Out'] as BigNumber).toBigInt() : undefined;
+
                 swapResult.amountOut =
                     lastToken0 === path[path.length - 1]
-                        ? (parsedEvent.args['amount0Out'] as BigNumber).toBigInt()
-                        : (parsedEvent.args['amount1Out'] as BigNumber).toBigInt();
+                        ? eventAmount0Out
+                        : eventAmount1Out;
             }
         }
 
@@ -217,7 +228,9 @@ export class UniswapV2RouterSwapDecoder extends Decoder<SwapAction> {
                 // if the swap is fee-less, we just check get the last amount
                 const amounts = outputs['amounts'];
 
-                swapResult.amountOut = amounts[amounts.length - 1];
+                const lastAmount = amounts[amounts.length - 1] ? (amounts[amounts.length - 1] as BigNumber).toBigInt() : undefined;
+
+                swapResult.amountOut = lastAmount;
             } else {
                 // otherwise, we need to check the call tree to pull out balance information
                 if (hasTraceExt(node)) {
@@ -234,6 +247,8 @@ export class UniswapV2RouterSwapDecoder extends Decoder<SwapAction> {
                             break;
                         case 'eth':
                             const calls = node.children.filter((v) => v.type === 'call');
+
+                            const lastAmount = calls[calls.length - 1].value ? (calls[calls.length - 1].value as BigNumber).toBigInt() : undefined;
 
                             swapResult.amountOut = calls[calls.length - 1].value.toBigInt();
                             break;
