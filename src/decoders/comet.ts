@@ -54,6 +54,7 @@ export class CometSupplyDecoder extends Decoder<SupplyAction> {
 
         const supplyResult: SupplyAction = {
             type: 'supply',
+            protocol: 'Compound',
             operator: node.from,
             supplier: functionName === 'supplyFrom(address from,address dst,address asset,uint amount)'
                 ? inputs['from']

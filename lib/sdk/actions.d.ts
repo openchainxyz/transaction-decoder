@@ -48,6 +48,7 @@ export type ENSRegisterAction = {
 };
 export type SupplyAction = {
     type: 'supply';
+    protocol: string;
     operator: string;
     supplier: string;
     supplyToken: string;
