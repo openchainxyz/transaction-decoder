@@ -1,6 +1,6 @@
 {
   "name": "@samczsun/transaction-decoder",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Decode EVM-based transaction into structured data",
   "main": "index.js",
   "scripts": {

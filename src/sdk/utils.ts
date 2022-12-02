@@ -98,6 +98,54 @@ export const findAffectedContract = (metadata: TraceMetadata, node: TraceEntry):
     throw new Error("strange, didn't find parent node");
 };
 
+export const decorateTraceResponse = (traceResponse: TraceResponse): { traceResult: TraceResponse, traceMetadata: TraceMetadata } => {
+    let metadata: TraceMetadata = {
+        abis: {},
+        nodesByPath: {},
+    };
+
+    let preprocess = (node: TraceEntry) => {
+        metadata.nodesByPath[node.path] = node;
+
+        if (node.type === 'call') {
+            node.children.forEach(preprocess);
+        }
+    };
+    preprocess(traceResponse.entrypoint);
+
+    for (let [address, entries] of Object.entries(traceResponse.addresses)) {
+        metadata.abis[address] = {};
+        for (let [codehash, info] of Object.entries(entries)) {
+
+            metadata.abis[address][codehash] = new ethers.utils.Interface([
+                ...Object.values(info.functions),
+                ...Object.values(info.events),
+                ...Object.values(info.errors).filter(
+                    (v) =>
+                        !(
+                            // lmao wtf ethers
+                            (
+                                (v.name === 'Error' &&
+                                    v.inputs &&
+                                    v.inputs.length === 1 &&
+                                    v.inputs[0].type === 'string') ||
+                                (v.name === 'Panic' &&
+                                    v.inputs &&
+                                    v.inputs.length === 1 &&
+                                    v.inputs[0].type === 'uint256')
+                            )
+                        ),
+                ),
+            ]);
+        }
+    }
+
+    return {
+        traceResult: traceResponse,
+        traceMetadata: metadata,
+    }
+}
+
 const flattenTraceLogs = (node: TraceEntryCall, traceResult: TraceResponse, traceMetadata: TraceMetadata, recursive: boolean): Array<LogWithPath> => {
     const ourLogs = node.children
         .filter((node): node is TraceEntryLog => node.type === 'log')

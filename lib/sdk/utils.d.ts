@@ -13,4 +13,8 @@ export declare const flattenLogs: (node: DecoderInputReceiptExt) => Log[];
 export declare const isDecoderInput: (node: DecoderInput | Log) => node is DecoderInput;
 export declare const getNodeId: (node: DecoderInput | Log) => string;
 export declare const findAffectedContract: (metadata: TraceMetadata, node: TraceEntry) => [TraceEntryCall, TraceEntryCall[]];
+export declare const decorateTraceResponse: (traceResponse: TraceResponse) => {
+    traceResult: TraceResponse;
+    traceMetadata: TraceMetadata;
+};
 export declare const remap: (node: TraceEntryCall, traceResult: TraceResponse, traceMetadata: TraceMetadata, parentAbi?: Interface) => DecoderInputTraceExt;
