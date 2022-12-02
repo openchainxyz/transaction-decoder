@@ -130,7 +130,7 @@ const flattenTraceLogs = (node: TraceEntryCall, traceResult: TraceResponse, trac
     return ourLogs;
 };
 
-const remap = (node: TraceEntryCall, traceResult: TraceResponse, traceMetadata: TraceMetadata, parentAbi?: Interface): DecoderInputTraceExt => {
+export const remap = (node: TraceEntryCall, traceResult: TraceResponse, traceMetadata: TraceMetadata, parentAbi?: Interface): DecoderInputTraceExt => {
     let thisAbi = new Interface([
         ...traceMetadata.abis[node.to][node.codehash].fragments,
         ...(parentAbi?.fragments || []),
