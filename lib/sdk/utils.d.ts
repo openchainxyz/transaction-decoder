@@ -1,7 +1,8 @@
 import { BytesLike } from "ethers";
 import { EventFragment, FunctionFragment } from '@ethersproject/abi/lib';
+import { Interface } from '@ethersproject/abi';
 import { Log } from '@ethersproject/abstract-provider';
-import { DecoderInput, DecoderInputReceiptExt, DecoderInputTraceExt, TraceEntry, TraceEntryCall, TraceMetadata } from './types';
+import { DecoderInput, DecoderInputReceiptExt, DecoderInputTraceExt, TraceEntry, TraceEntryCall, TraceMetadata, TraceResponse } from './types';
 export declare const hasSelector: (calldata: BytesLike, selector: string | FunctionFragment) => boolean;
 export declare const hasTopic: (log: Log, selector: string | EventFragment) => boolean;
 export declare const isEqualAddress: (a: string, b: string) => boolean;
@@ -12,3 +13,4 @@ export declare const flattenLogs: (node: DecoderInputReceiptExt) => Log[];
 export declare const isDecoderInput: (node: DecoderInput | Log) => node is DecoderInput;
 export declare const getNodeId: (node: DecoderInput | Log) => string;
 export declare const findAffectedContract: (metadata: TraceMetadata, node: TraceEntry) => [TraceEntryCall, TraceEntryCall[]];
+export declare const remap: (node: TraceEntryCall, traceResult: TraceResponse, traceMetadata: TraceMetadata, parentAbi?: Interface) => DecoderInputTraceExt;
