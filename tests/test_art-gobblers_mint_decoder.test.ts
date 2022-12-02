@@ -2,8 +2,8 @@ import assert from "assert";
 
 import { getInput, getDummyDecoderState } from "./utils";
 import decoderInputJson from "./testdata/art-gobblers_mint_decoder_input.json";
-import { ArtGobblersMintDecoder } from "../decoders/art-gobblers";
-import { isEqualAddress } from "../sdk/utils";
+import { ArtGobblersMintDecoder } from "../src/decoders/art-gobblers";
+import { isEqualAddress } from "../src/sdk/utils";
 import { BigNumber } from "ethers";
 
 

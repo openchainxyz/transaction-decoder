@@ -1,6 +1,6 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
 
-import { DecoderInput, DecoderState, ProviderDecoderChainAccess } from "../sdk/types"
+import { DecoderInput, DecoderState, ProviderDecoderChainAccess } from "../src/sdk/types"
 
 export const transformDecoderInput = (jsonInput: any) => {
     const keys = Object.keys(jsonInput);

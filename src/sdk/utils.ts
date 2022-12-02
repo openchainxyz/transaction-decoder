@@ -13,7 +13,7 @@ import {
     TraceEntryLog,
     TraceMetadata,
     TraceResponse,
-} from '../sdk/types';
+} from './types';
 
 export const hasSelector = (calldata: BytesLike, selector: string | FunctionFragment) => {
     return (

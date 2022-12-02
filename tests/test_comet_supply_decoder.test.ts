@@ -2,8 +2,8 @@ import assert from "assert";
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { BigNumber, ethers } from 'ethers';
 
-import { CometSupplyDecoder } from "../decoders/comet";
-import { isEqualAddress } from "../sdk/utils";
+import { CometSupplyDecoder } from "../src/decoders/comet";
+import { isEqualAddress } from "../src/sdk/utils";
 import { getInput, getDummyDecoderState } from "./utils";
 import decoderInputJson from "./testdata/comet_supply_decoder_input.json";
 
